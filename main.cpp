@@ -1,66 +1,56 @@
 #include "header.hpp"
 
 using namespace std;
-using namespace cv;
 
 string source_video;
+string gradient = "$B8W#ohbpwZ0LJYznf/|1[+-<!I:^' ";
 
-vector<Mat> ConvertA(VideoCapture video) {
-    vector<Mat> frames;
-    Mat frame;
-    Mat temp;
+int main() {
+    string path;
+    cout << "Path: "; cin >> path;
+    cv::VideoCapture video(path);
+
+    if (!video.isOpened()) return -1;
+    double fps = video.get(cv::CAP_PROP_FPS);//cap_prop_fps метод opencv для счета фпс видео
+    int delay;
+    if (fps > 0) {
+        delay = 1000 /fps;
+    }
+    else {
+        delay = 16;
+    }
+    cv::Mat frame, gray;
+    int len_terminal = 200;
+
     while (true) {
         video >> frame;
-        if (frame.empty())
-            break;
-        cv::resize(frame, temp, cv::Size(), 0.4, 0.4);
-        frames.push_back(temp.clone());
-    }
-    video.release();
-    return frames;
-}
+        if (frame.empty()) break;
 
-vector<string> ASCIIB(vector<Mat> frames) {
-    vector<string> res;
-    for (int i = 0; i < frames.size(); i++)
-    {
-        string str = "";
-        Mat frame = frames[i];
-        for (int y = 0; y < frame.rows; y += 2) {
-            for (int x = 0; x < frame.cols; x++) {
-                Vec3b& color = frame.at<Vec3b>(y, x);
-                if (color[0] == 0 && color[1] == 0 && color[2] == 0)
-                    str += " ";
-                else if (color[0] == 255 && color[1] == 255 && color[2] == 255)
-                    str += "%";
-                else
-                    str += "*";
+        // 1. Считаем коэффициент, чтобы картинка вписалась в targetWidth
+        double scale = (double)len_terminal / frame.cols;
+
+        // 2. ВАЖНО: по высоте жмем в 2 раза сильнее (0.5), иначе арт будет вытянутым
+        cv::Mat resized;
+        cv::resize(frame, resized, cv::Size(), scale, scale * 0.5);
+
+        // 3. Переводим в ч/б сразу средствами OpenCV для четкости
+        cv::cvtColor(resized, gray, cv::COLOR_BGR2GRAY);
+
+        string output = "";
+        for (int y = 0; y < gray.rows; y++) {
+            for (int x = 0; x < gray.cols; x++) {
+                // Получаем яркость (0-255)
+                uint8_t intensity = gray.at<uint8_t>(y, x);
+                // Выбираем символ
+                int index = intensity * (gradient.length() - 1) / 255;
+                output += gradient[index];
             }
-            str += "\n";
+            output += "\n";
         }
-        res.push_back(str);
-    }
-    return res;
-}
 
-int main(int argc, char** argv)
-{
-    cout << "введите путь файла" <<endl;
-    cin >> source_video;
-    VideoCapture video(source_video);
-
-    if (!video.isOpened()) {
-        cout << "Video doesn't find" << endl;
-        cin.get();
-        return -1;
-    }
-    vector<Mat> frames = ConvertA(video);
-    vector<string> res = ASCIIB(frames);
-
-    for (int i = 0; i < res.size(); i++)
-    {
-        cout << "\033[H" << res[i] << flush;
-        this_thread::sleep_for(chrono::milliseconds(33));
+        // Очистка и вывод
+        cout << "\033[H" << output << flush;
+        this_thread::sleep_for(chrono::milliseconds(delay));
     }
     return 0;
 }

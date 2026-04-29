@@ -2,7 +2,6 @@
 
 using namespace std;
 
-string source_video;
 string gradient = "$B8W#ohbpwZ0LJYznf/|1[+-<!I:^' ";
 
 int main() {

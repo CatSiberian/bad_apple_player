@@ -24,8 +24,6 @@ int main() {
     while (true) {
         video >> frame;
         if (frame.empty()) break;
-
-        // 1. Считаем коэффициент, чтобы картинка вписалась в targetWidth
         double scale = (double)len_terminal / frame.cols;
 
         // 2. ВАЖНО: по высоте жмем в 2 раза сильнее (0.5), иначе арт будет вытянутым

@@ -26,11 +26,9 @@ int main() {
         if (frame.empty()) break;
         double scale = (double)len_terminal / frame.cols;
 
-        // 2. ВАЖНО: по высоте жмем в 2 раза сильнее (0.5), иначе арт будет вытянутым
+        //ВАЖНО: по высоте жмем в 2 раза сильнее (0.5), иначе арт будет вытянутым
         cv::Mat resized;
         cv::resize(frame, resized, cv::Size(), scale, scale * 0.5);
-
-        // 3. Переводим в ч/б сразу средствами OpenCV для четкости
         cv::cvtColor(resized, gray, cv::COLOR_BGR2GRAY);
 
         string output = "";

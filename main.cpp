@@ -2,14 +2,25 @@
 
 using namespace std;
 
-string gradient = "$B8W#ohbpwZ0LJYznf/|1[+-<!I:^' ";
+string gradient = "@BWZJf/1+<!:^' ";
+string path;
+cv::VideoCapture video;
+
+
 
 int main() {
-    string path;
-    cout << "Path: "; cin >> path;
-    cv::VideoCapture video(path);
+    while (true) {
+        cout << "Введите путь к файлу: "; cin >> path;
+        video.open(path);
+        if (video.isOpened()) {
+            break;
+        }
+        else {
+            cout << "Файл не найден, повторите попытку " << endl;
+        }
+        video.release();
+    }
 
-    if (!video.isOpened()) return -1;
     double fps = video.get(cv::CAP_PROP_FPS);//cap_prop_fps метод opencv для счета фпс видео
     int delay;
     if (fps > 0) {

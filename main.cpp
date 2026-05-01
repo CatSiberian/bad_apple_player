@@ -6,8 +6,6 @@ string gradient = "@BWZJf/1+<!:^' ";
 string path;
 cv::VideoCapture video;
 
-
-
 int main() {
     while (true) {
         cout << "Введите путь к файлу: "; cin >> path;

@@ -86,8 +86,9 @@ int photo_process () {
 
 int main() {
     int mode;
-    cout << "1. Видео \n 2. Фото \n 0. Выход" << endl; cin >> mode;
+    cout << "1. Видео \n 2. Фото \n 0. Выход" << endl;
     while(true) {
+        cin >> mode;
         if (mode == 1){
             video_process();
         }

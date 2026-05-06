@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "header.hpp"
 
 using namespace std;
@@ -5,9 +9,9 @@ using namespace std;
 string gradient = "@BWZJf/1+<!:^' ";
 string path;
 cv::VideoCapture video;
-int len_terminal = 200;
+int len_terminal;
 
-    cv::Mat photo, frame, gray, resized;
+cv::Mat photo, frame, gray, resized;
 
 void video_process() {
     while (true) {
@@ -30,7 +34,6 @@ void video_process() {
     else {
         delay = 16;
     }
-//    cv::Mat frame, gray;
 
     while (true) {
         video >> frame;
@@ -38,7 +41,6 @@ void video_process() {
         double scale = (double)len_terminal / frame.cols;
 
         //ВАЖНО: по высоте жмем в 2 раза сильнее (0.5), иначе арт будет вытянутым
-//        cv::Mat resized;
         cv::resize(frame, resized, cv::Size(), scale, scale * 0.5);
         cv::cvtColor(resized, gray, cv::COLOR_BGR2GRAY);
 
@@ -60,9 +62,8 @@ void video_process() {
     }
 }
 
-int photo_process () {
+void photo_process () {
     cout << "введите путь к картинке: "<< endl; cin >> path;
-//    cv::Mat photo;
     photo = cv::imread(path);
     double scale = (double)len_terminal / photo.cols;
     cv::Mat resized;
@@ -72,22 +73,25 @@ int photo_process () {
     string output = "";
     for (int y = 0; y < gray.rows; y++) {
         for (int x = 0; x < gray.cols; x++) {
-            // Получаем яркость (0-255)
             uint8_t intensity = gray.at<uint8_t>(y, x);
-            // Выбираем символ
             int index = intensity * (gradient.length() - 1) / 255;
             output += gradient[index];
         }
         output += "\n";
     }
     cout << "\033[H" << output << flush;
-    return 0;
 }
 
 int main() {
+#ifdef _WIN32
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
+#endif
+
     int mode;
-    cout << "1. Видео \n 2. Фото \n 0. Выход" << endl;
+
     while(true) {
+        cout << " 1. Видео \n 2. Фото \n 0. Выход" << endl;
         cin >> mode;
         if (mode == 1){
             video_process();

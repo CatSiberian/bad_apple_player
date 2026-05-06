@@ -1,11 +1,13 @@
 #ifndef HEADER_HPP
 #define HEADER_HPP
 
+#include <chrono>
 #include <iostream>
-#include <vector>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/videoio.hpp>
 #include <string.h>
 #include <thread>
-#include <chrono>
-#include <opencv2/opencv.hpp>
+#include <vector>
 
 #endif // HEADER_HPP
